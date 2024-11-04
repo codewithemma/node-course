@@ -1,16 +1,16 @@
 const http = require("http");
+const fs = require("fs");
 
-const server = http.createServer((req, res) => {
-  if (req.url === "/") {
-    res.end("homepage");
-  } else if (req.url === "/about") {
-    res.end("about page");
-  } else res.end("not found");
-});
-
-server.listen(3000, () =>
-  console.log(
-    `server started on
-    port 3000;` + "press Ctrl-C to terminate...."
-  )
-);
+http
+  .createServer((req, res) => {
+    // const text = fs.readFileSync("./content/big.txt", "utf-8");
+    // res.end(text);
+    const fileStream = fs.createReadStream("./content/big.txt", "utf-8");
+    fileStream.on("open", () => {
+      fileStream.pipe(res);
+    });
+    fileStream.on("error", (error) => {
+      res.end(error);
+    });
+  })
+  .listen(5000);
